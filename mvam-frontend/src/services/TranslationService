@@ -46,4 +46,10 @@ export default class TranslationService {
         console.log("Uploaded a file");
         return result.data;
     }
+
+    async getAvailableLanguages() {
+        let languageUrl = `${this.url}/translate/languages`;
+        let result = await axios.get(languageUrl);
+        return result.data;
+    }
 }

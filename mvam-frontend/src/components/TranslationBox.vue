@@ -1,11 +1,16 @@
 <template>
   <v-container>
     <div class="input-section">
-      <v-row class="language-options">
-        <v-col cols="12">
-
-        </v-col>
-      </v-row>
+      <v-container>
+        <v-row class="language-options" justify="space-around">
+          <v-col cols="4">
+            <v-select outlined label="From"></v-select>
+          </v-col>
+          <v-col cols="4">
+            <v-select outlined label="To"></v-select>
+          </v-col>
+        </v-row>
+      </v-container>
       <v-row justify="center">
         <v-col cols="11" md="6">
           <v-card class="file-droppable" elevation="1" @drop.prevent="dropFile" @dragover.prevent>
@@ -15,7 +20,7 @@
             <v-card-subtitle>
               <v-row justify="space-between">
                 <v-col cols="9" md="8">
-                  <p class="font-weight-light">To translate something, upload a file by dragging one in, clicking the upload file icon or use the provided text area below.</p>
+                  <p class="font-weight-light">To translate something, upload a text file by dragging one in, clicking the upload file icon or use the provided text area below.</p>
                 </v-col>
                 <v-col cols="2">
                   <v-file-input id="file-upload" dense hide-input @change="filePicked"></v-file-input>
@@ -91,7 +96,14 @@ export default {
     previouslyTranslated: "",
     showCopySnackbar: false
   }),
-
+  async mounted() {
+    let service = new TranslationService();
+    let data = await service.getAvailableLanguages()
+    let l = [];
+    for (let k in Object.keys(data)) {
+      // fix this
+    }
+  },
   methods: {
     async doTranslation() {
       // We don't want to request a new translation when the text has not changed.
@@ -146,12 +158,14 @@ export default {
 
       let tservice = new TranslationService();
       let file = input.files[0];
-      let result = await tservice.uploadFileToTranslate("en", file, "nl");
-
-      this.translatedText = result.text;
+      if (file.name.endsWith(".txt")) {
+        let result = await tservice.uploadFileToTranslate("en", file, "nl");
+        await this.$vuetify.goTo("#translation");
+        await this.$vuetify.goTo("#translation");
+        this.translatedText = result.text;
+        this.inputText = "";
+      }
       input.value = '';
-      this.inputText = "";
-      await this.$vuetify.goTo("#translation");
     },
     async dropFile(e) {
       if (e.dataTransfer.files.length < 1) return;
@@ -159,10 +173,6 @@ export default {
       input.value = '';
       input.files = e.dataTransfer.files;
       await this.filePicked();
-
-      // Not really necessary, but it gives some feedback to the user.
-      let audio = new Audio('https://freesound.org/data/previews/335/335908_5865517-lq.mp3');
-      await audio.play();
     }
   }
 }
@@ -171,8 +181,5 @@ export default {
 <style scoped>
   .primary-color-text {
     color: #534263;
-  }
-  .file-droppable:drop {
-
   }
 </style>
