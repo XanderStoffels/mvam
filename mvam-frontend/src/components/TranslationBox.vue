@@ -2,10 +2,12 @@
   <v-container>
     <div class="input-section">
       <v-row class="language-options">
+        <v-col cols="12">
 
+        </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col cols="11">
+        <v-col cols="11" md="6">
           <v-textarea id="textInput"
                       color="primary"
                       v-model="inputText"
@@ -18,28 +20,45 @@
                       placeholder="Here goes the text you want to translate."
                       @blur="doTranslation"
                       @keydown="escapeInputBox"
+                      @click:clear="onInputCleared"
           />
-
+        </v-col>
+        <v-col cols="11" md="6">
+          <v-banner elevation="1">
+             <v-container>
+               <v-row>
+                 <p class="text-h6 primary-color-text">Translated text</p>
+                 <v-spacer/>
+                 <v-btn
+                     text
+                     color="accent"
+                     @click="copyToClipboard"
+                 >Copy</v-btn>
+               </v-row>
+               <v-row>
+                 <v-textarea :loading="currentlyTranslating" readonly v-model="translatedText" />
+               </v-row>
+             </v-container>
+          </v-banner>
         </v-col>
       </v-row>
     </div>
-    <div class="output-section">
-
-      <v-row justify="center">
-        <v-col cols="11">
-         <v-card raised min-height="100px" :loading="currentlyTranslating">
-           <v-card-title>
-             <p class="text-h6">Your translated text</p>
-           </v-card-title>
-           <v-card-text>
-             <div class="translated-text">
-               {{ translatedText }}
-             </div>
-           </v-card-text>
-         </v-card>
-  </v-col>
-</v-row>
-</div>
+    <v-snackbar
+        v-model="showCopySnackbar"
+        timeout="2500"
+    >
+      <span>Translation copied!</span>
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="accent"
+            text
+            v-bind="attrs"
+            @click="showCopySnackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
 </v-container>
 </template>
 
@@ -52,7 +71,8 @@ export default {
     currentlyTranslating: false,
     translatedText: "",
     latestTranslation: null,
-    previouslyTranslated: ""
+    previouslyTranslated: "",
+    showCopySnackbar: false
   }),
 
   methods: {
@@ -82,27 +102,33 @@ export default {
       if (e.key === "Enter" && !e.shiftKey) {
           // Blur the input.
           let input = document.getElementById("textInput");
+          if (!this.inputText) this.translatedText = "";
           input.blur();
       }
     },
     displayTranslationError() {
-
+      // TODO
     },
     isValidInput() {
       if (!this.inputText) return false;
       if (this.previouslyTranslated === this.inputText) return false;
       if (this.inputText.trim() === "") return false;
       return true;
+    },
+    onInputCleared() {
+      this.translatedText = "";
+
+    },
+    async copyToClipboard() {
+      await navigator.clipboard.writeText(this.translatedText);
+      this.showCopySnackbar = true;
     }
   }
 }
 </script>
 
 <style scoped>
-.card-title {
-  color: #534263;
-}
-.translated-text {
+.primary-color-text {
   color: #534263;
 }
 </style>
