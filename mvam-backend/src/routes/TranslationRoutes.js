@@ -10,15 +10,20 @@ module.exports = function (app) {
     app.post("/translate", async (req, res) => {
         let text = req.body.text;
         let target = req.body.target;
-
-        if (!text || !target) {
+        let source = req.body.source;
+        if (isEmptyOrSpaces(text) || isEmptyOrSpaces(target)) {
             res.status(400).send("Text and language target are required.");
             return;
         }
 
+        let translator = new TranslationService();
         try {
-            let translator = new TranslationService();
-            let translation = await translator.detectAndTranslate(text, target);
+            let translation;
+            if (isEmptyOrSpaces(source)) {
+                translation = await translator.detectAndTranslate(text, target);
+            } else {
+                translation = await translator.translateText(text, source, target);
+            }
             res.status(200);
             res.send(translation);
         } catch (ex) {
@@ -29,4 +34,8 @@ module.exports = function (app) {
         }
 
     });
+
+    function isEmptyOrSpaces(str){
+        return str === null || str.match(/^\s*$/) !== null;
+    }
 }

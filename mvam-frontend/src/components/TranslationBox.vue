@@ -24,45 +24,75 @@
       </v-row>
     </div>
     <div class="output-section">
+
       <v-row justify="center">
         <v-col cols="11">
          <v-card raised min-height="100px" :loading="currentlyTranslating">
            <v-card-title>
-             <p>Your translated text</p>
+             <p class="text-h6">Your translated text</p>
            </v-card-title>
            <v-card-text>
              <div class="translated-text">
-                {{translatedText}}
+               {{ translatedText }}
              </div>
            </v-card-text>
          </v-card>
-        </v-col>
-      </v-row>
-    </div>
-  </v-container>
+  </v-col>
+</v-row>
+</div>
+</v-container>
 </template>
 
 <script>
+import TranslationService from "@/services/TranslationService";
 export default {
   name: "TranslationBox",
   data: () => ({
     inputText: "",
+    currentlyTranslating: false,
     translatedText: "",
-    currentlyTranslating: "accent",
+    latestTranslation: null,
+    previouslyTranslated: ""
   }),
 
   methods: {
-    doTranslation() {
+    async doTranslation() {
+      // We don't want to request a new translation when the text has not changed.
+      if (!this.isValidInput()) return;
+
+      // Display a loading bar.
+      // Use the translation service to request a translation from the backend.
       this.currentlyTranslating = "primary";
-      this.translatedText = this.inputText;
+      let tservice = new TranslationService();
+      let translation = await tservice.getTranslationAsync("nl", this.inputText, "en");
+      if (!translation) {
+        this.currentlyTranslating = false;
+        this.displayTranslationError();
+        return;
+      }
+
+      // Update UI with gathered information;
+      this.previouslyTranslated = this.inputText;
+      this.latestTranslation = translation;
+      this.translatedText = translation.text;
       this.currentlyTranslating = false;
     },
+
     escapeInputBox(e) {
       if (e.key === "Enter" && !e.shiftKey) {
           // Blur the input.
           let input = document.getElementById("textInput");
           input.blur();
       }
+    },
+    displayTranslationError() {
+
+    },
+    isValidInput() {
+      if (!this.inputText) return false;
+      if (this.previouslyTranslated === this.inputText) return false;
+      if (this.inputText.trim() === "") return false;
+      return true;
     }
   }
 }

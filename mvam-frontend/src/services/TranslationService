@@ -1,3 +1,34 @@
-export default class TranslationService {
+import axios from 'axios';
 
+export default class TranslationService {
+    constructor() {
+        if (process.env.NODE_ENV === 'production') {
+            this.url = "https://mercierapi.xanderapp.com";
+        } else {
+            this.url = "http://localhost:3000";
+        }
+    }
+
+    /***
+     * Request a translation from the Mercier Translation API.
+     * @param sourceLang The language code in which the input text is written.
+     * @param text The text to be translated.
+     * @param targetLang The language code that the input text should be translated to.
+     * @returns {Promise<any>}
+     */
+    async getTranslationAsync(sourceLang, text, targetLang) {
+        if (!sourceLang || !text || !targetLang) return Error("The given arguments should not be null.");
+        let translationUrl = `${this.url}/translate`;
+        try {
+            let result = await axios.post(translationUrl,  {
+                text,
+                target: targetLang,
+                source: sourceLang
+            });
+            return result.data;
+        } catch (ex) {
+            console.error("Unable to get a translation from Mercier API.");
+            return null;
+        }
+    }
 }
