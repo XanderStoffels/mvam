@@ -1,0 +1,28 @@
+const translate = require('@vitalets/google-translate-api');
+
+class TranslationService {
+    /**
+     * Translates a given text using the Google Translate API.
+     * Automatically detects the source language.
+     * @param text The text to be translated.
+     * @param target The target language.
+     */
+    async detectAndTranslate(text, target) {
+        return await translate(text, {to: target});
+    }
+
+    /**
+     * Translates a given text using the Google Translate API.
+     * @param text The text to be translated.
+     * @param target The target language.
+     */
+    async translateText(text, source, target) {
+        return await translate(text, {to: target, from: source});
+    }
+
+    availableLanguages() {
+        return translate.languages;
+    }
+}
+
+module.exports = TranslationService;

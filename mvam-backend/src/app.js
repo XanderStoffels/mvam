@@ -1,23 +1,20 @@
 const express = require('express');
-const app = express();
-const port = 3000;
+const bodyParser = require('body-parser');
 
-app.get('/', (req, res) => {
-    res.send("<h1>Hello Xander</h1>");
-});
+const port = 3000;
+const app = express();
+
+// Enable support for JSON bodies from incoming requests.
+app.use(bodyParser.json());
+
+// Add API routes.
+require("./routes/TranslationRoutes")(app);
+
 
 app.listen(port, async () => {
-    const text = "Hello, world!";
-    const target = "nl";
-
-   // await translateText(text, target);
     console.log(`Listening on port ${port}!`);
-});
+})
 
 
-
-async function translateText(text, target) {
-
-}
 
 
