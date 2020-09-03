@@ -5,7 +5,7 @@
       color="secondary"
     >
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
+      <v-divider class="mr-4 ml-2" vertical/>
       <v-toolbar-title>
         <span class="title-bar-title">Mercier Translations</span>
       </v-toolbar-title>

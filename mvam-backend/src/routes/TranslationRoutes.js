@@ -27,12 +27,28 @@ module.exports = function (app) {
             res.status(200);
             res.send(translation);
         } catch (ex) {
-            console.log("Unable to fetch data from the Google Translate API.")
-            console.error(ex);
-            res.status(503);
-            res.send("Google Translate API is unavailable.");
+            res.status(503).send(ex);
         }
+    });
 
+    app.post("/translate/file", async (req, res) => {
+        let target = req.query.target;
+        let source = req.query.source;
+        if (isEmptyOrSpaces(target) || isEmptyOrSpaces(source)) {
+            res.status(400).send("The language target and language source are required using a URL query.");
+            return;
+        }
+        if (!req.files || Object.keys(req.files).length === 0)
+            return res.status(400).send('No files were uploaded.');
+
+        let toTranslate = req.files.file.data.toString();
+        let translator = new TranslationService();
+        try {
+            let translated = await translator.translateText(toTranslate, source, target);
+            res.status(200).send(translated);
+        } catch (ex) {
+            res.status(503).send(ex);
+        }
     });
 
     function isEmptyOrSpaces(str){

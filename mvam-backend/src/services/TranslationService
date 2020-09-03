@@ -17,7 +17,13 @@ class TranslationService {
      * @param target The target language.
      */
     async translateText(text, source, target) {
-        return await translate(text, {to: target, from: source});
+        try {
+            return await translate(text, {to: target, from: source});
+        } catch (ex) {
+            console.log("Unable to fetch data from the Google Translate API.")
+            console.error(ex);
+            throw Error("Unable to fetch data from the Google Translate API.\n" + ex);
+        }
     }
 
     availableLanguages() {

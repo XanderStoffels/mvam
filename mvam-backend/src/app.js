@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const upload = require('express-fileupload');
 const cors = require('cors');
 
 const app = express();
@@ -20,6 +21,9 @@ app.use(cors({
         return callback(null, true);
     }
 }));
+
+// Enable support for uploading files, no options needed.
+app.use(upload(undefined));
 
 // Enable support for JSON bodies from incoming requests.
 app.use(bodyParser.json());
