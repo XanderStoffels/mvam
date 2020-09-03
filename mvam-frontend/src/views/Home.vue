@@ -1,17 +1,17 @@
 <template>
   <div class="home">
-
+    <translation-box/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
+import TranslationBox from '@/components/TranslationBox'
 
 export default {
   name: 'Home',
   components: {
-    // HelloWorld
+    TranslationBox
   },
   data: () => ({
     //
