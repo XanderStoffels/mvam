@@ -3,11 +3,23 @@
     <div class="input-section">
       <v-container>
         <v-row class="language-options" justify="space-around">
-          <v-col cols="4">
-            <v-select outlined label="From"></v-select>
+          <v-col cols="6">
+            <v-select :items="availableLanguages"
+                      v-model="selectedSourceLang"
+                      @change="doTranslation(true)"
+                      item-text="name"
+                      item-value="code"
+                      outlined
+                      label="From"/>
           </v-col>
-          <v-col cols="4">
-            <v-select outlined label="To"></v-select>
+          <v-col cols="6">
+            <v-select :items="availableLanguages"
+                      v-model="selectedTargetLang"
+                      @change="doTranslation(true)"
+                      item-text="name"
+                      item-value="code"
+                      outlined
+                      label="To"/>
           </v-col>
         </v-row>
       </v-container>
@@ -34,18 +46,19 @@
                           outlined
                           label="Manual Input"
                           filled
+                          :disabled="!isInputEnabled"
                           auto-grow
                           no-resize
                           clearable
                           placeholder="Here goes the text you want to translate."
-                          @blur="doTranslation"
+                          @blur="doTranslation(false)"
                           @keydown="escapeInputBox"
                           @click:clear="onInputCleared"/>
             </v-container>
           </v-card>
         </v-col>
         <v-col cols="11" md="6">
-          <v-banner elevation="1">
+          <v-banner rounded elevation="1">
              <v-container>
                <v-row>
                  <p class="text-h6 primary-color-text font-weight-medium">Translated text</p>
@@ -94,26 +107,41 @@ export default {
     translatedText: "",
     latestTranslation: null,
     previouslyTranslated: "",
-    showCopySnackbar: false
+    showCopySnackbar: false,
+    availableLanguages: [ {code: '', name: ''}],
+    selectedSourceLang: null,
+    selectedTargetLang: null,
   }),
+
   async mounted() {
     let service = new TranslationService();
     let data = await service.getAvailableLanguages()
-    let l = [];
-    for (let k in Object.keys(data)) {
-      // fix this
+    Object.keys(data)
+        .forEach(k => this.availableLanguages.push({code: k, name: data[k]}));
+  },
+
+  computed: {
+    isInputEnabled: function() {
+      if (this.availableLanguages?.length < 1) return false;
+      if (!this.selectedTargetLang || !this.selectedSourceLang) return false;
+      return true;
     }
   },
+
   methods: {
-    async doTranslation() {
-      // We don't want to request a new translation when the text has not changed.
-      if (!this.isValidInput()) return;
+    async doTranslation(skipValidation) {
+      // We don't want to request a new translation when the text is not valid.
+      if (!this.isInputEnabled || !this.inputText) return;
+      if (!skipValidation && !this.isValidInput()) return;
 
       // Display a loading bar.
       // Use the translation service to request a translation from the backend.
       this.currentlyTranslating = "primary";
+      console.log(this.selectedSourceLang);
+      console.log(this.selectedTargetLang);
       let tservice = new TranslationService();
-      let translation = await tservice.getTranslationAsync("nl", this.inputText, "en");
+      let translation =
+          await tservice.getTranslationAsync(this.selectedSourceLang, this.inputText, this.selectedTargetLang);
       if (!translation) {
         this.currentlyTranslating = false;
         this.displayTranslationError();
@@ -139,14 +167,12 @@ export default {
       // TODO
     },
     isValidInput() {
-      if (!this.inputText) return false;
       if (this.previouslyTranslated === this.inputText) return false;
       if (this.inputText.trim() === "") return false;
       return true;
     },
     onInputCleared() {
       this.translatedText = "";
-
     },
     async copyToClipboard() {
       await navigator.clipboard.writeText(this.translatedText);

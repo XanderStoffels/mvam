@@ -17,7 +17,7 @@ export default class TranslationService {
      * @returns {Promise<any>}
      */
     async getTranslationAsync(sourceLang, text, targetLang) {
-        if (!sourceLang || !text || !targetLang) return Error("The given arguments should not be null.");
+        if (!sourceLang || !text || !targetLang) throw Error("The given arguments should not be null.");
         let translationUrl = `${this.url}/translate`;
         try {
             let result = await axios.post(translationUrl,  {
@@ -33,7 +33,7 @@ export default class TranslationService {
     }
 
     async uploadFileToTranslate(sourceLang, file, targetLang) {
-        if (!sourceLang || !file || !targetLang) return Error("The given arguments should not be null.");
+        if (!sourceLang || !file || !targetLang) throw Error("The given arguments should not be null.");
         let translationUrl = `${this.url}/translate/file?source=${sourceLang}&target=${targetLang}`;
 
         let formData = new FormData();

@@ -10,13 +10,12 @@ const port = 3000;
 const allowedOrigins = ["http://localhost:8080", "https://mercier.xanderapp.com", "http://mercier.anderapp.com"];
 app.use(cors({
     origin: function(origin, callback){
-        // allow requests with no origin
+        // do not allow requests with no origin
         // (like mobile apps or curl requests)
         // if(!origin) return callback(null, true);
         if(allowedOrigins.indexOf(origin) === -1){
-            let msg = 'The CORS policy for this site does not ' +
-                'allow access from the specified Origin.';
-            return callback(new Error(msg), false);
+            let msg = `Blocked by CORS protection. You are not allowed to use this service from your origin.`;
+            return callback(msg, false);
         }
         return callback(null, true);
     }
