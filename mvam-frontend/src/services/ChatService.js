@@ -12,7 +12,7 @@ export default class ChatSerivce {
         if (this.socket && this.socket.connected)
             this.socket.disconnect();
 
-        this.socket = io(this.url);
+        this.socket = io(this.url, {secure: process.env.NODE_ENV === 'production'});
 
         this.socket.on("connect", this.onConnected);
         this.socket.on("error", this.onError);
