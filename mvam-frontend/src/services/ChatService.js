@@ -3,7 +3,7 @@ import io from "socket.io-client";
 export default class ChatSerivce {
     constructor() {
         this.url = process.env.NODE_ENV === 'production' ?
-            "ws://mercierapi.xanderapp.com" :
+            "https://mercierapi.xanderapp.com" :
             this.url = "ws://localhost:3000";
         this.usersInRoom = 0;
     }
@@ -12,7 +12,8 @@ export default class ChatSerivce {
         if (this.socket && this.socket.connected)
             this.socket.disconnect();
 
-        this.socket = io(this.url, {secure: process.env.NODE_ENV === 'production'});
+
+        this.socket = io(this.url);
 
         this.socket.on("connect", this.onConnected);
         this.socket.on("error", this.onError);
