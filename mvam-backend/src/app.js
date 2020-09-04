@@ -4,15 +4,18 @@ const upload = require('express-fileupload');
 const cors = require('cors');
 
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 const port = 3000;
 
 // Enable CORS for specific routes.
 const allowedOrigins = ["http://localhost:8080", "https://mercier.xanderapp.com", "http://mercier.anderapp.com"];
+
 app.use(cors({
     origin: function(origin, callback){
-        // do not allow requests with no origin
+        // allow requests with no origin
         // (like mobile apps or curl requests)
-        // if(!origin) return callback(null, true);
+        if(!origin) return callback(null, true);
         if(allowedOrigins.indexOf(origin) === -1){
             let msg = `Blocked by CORS protection. You are not allowed to use this service from your origin.`;
             return callback(msg, false);
@@ -20,6 +23,8 @@ app.use(cors({
         return callback(null, true);
     }
 }));
+
+
 
 // Enable support for uploading files, no options needed.
 app.use(upload(undefined));
@@ -29,9 +34,9 @@ app.use(bodyParser.json());
 
 // Add API routes.
 require("./routes/TranslationRoutes")(app);
+require("./routes/SocketChat")(io);
 
-
-app.listen(port, async () => {
+http.listen(port, async () => {
     console.log(`Listening on port ${port}!`);
 })
 

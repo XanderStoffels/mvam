@@ -2,11 +2,9 @@ import axios from 'axios';
 
 export default class TranslationService {
     constructor() {
-        if (process.env.NODE_ENV === 'production') {
-            this.url = "https://mercierapi.xanderapp.com";
-        } else {
+        this.url = process.env.NODE_ENV === 'production' ?
+            "https://mercierapi.xanderapp.com" :
             this.url = "http://localhost:3000";
-        }
     }
 
     /***

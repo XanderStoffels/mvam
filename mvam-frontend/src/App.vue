@@ -4,20 +4,30 @@
       app
       color="secondary"
     >
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="showNavigation = !showNavigation"/>
       <v-divider class="mr-4 ml-2" vertical/>
       <v-toolbar-title>
         <span class="title-bar-title">Mercier Translations</span>
       </v-toolbar-title>
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-      </v-btn>
     </v-app-bar>
+    <v-navigation-drawer v-model="showNavigation" absolute temporary>
+      <v-list nav dense>
+        <v-list-item-group active-class="text--primary text--accent-4">
+          <v-list-item to="/">
+            <v-list-item-icon>
+              <v-icon>mdi-translate</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Translate</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/chat">
+            <v-list-item-icon>
+              <v-icon>mdi-chat</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Get help from chat</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
 
     <v-main>
         <router-view />
@@ -36,7 +46,7 @@ export default {
   },
 
   data: () => ({
-    //
+    showNavigation: false
   }),
 };
 </script>

@@ -184,8 +184,8 @@ export default {
 
       let tservice = new TranslationService();
       let file = input.files[0];
-      if (file.name.endsWith(".txt")) {
-        let result = await tservice.uploadFileToTranslate("en", file, "nl");
+      if (file.name.endsWith(".txt") && this.selectedSourceLang && this.selectedTargetLang) {
+        let result = await tservice.uploadFileToTranslate(this.selectedSourceLang, file, this.selectedTargetLang);
         await this.$vuetify.goTo("#translation");
         await this.$vuetify.goTo("#translation");
         this.translatedText = result.text;
