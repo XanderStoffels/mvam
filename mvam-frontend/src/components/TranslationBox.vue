@@ -117,10 +117,9 @@ export default {
     Object.keys(data)
         .forEach(k => this.availableLanguages.push({code: k, name: data[k]}));
 
-      let x = this.$store.getters.getSavedTargetLanguage;
-      let y = this.$store.getters.getSavedSourceLanguage;
-      this.selectedTargetLang = x;
-      this.selectedSourceLang = y;
+      // Select the last selected language from a previous translation session.
+      this.selectedTargetLang = this.$store.getters.getSavedTargetLanguage;
+      this.selectedSourceLang = this.$store.getters.getSavedSourceLanguage;
   },
 
   computed: {
@@ -168,7 +167,8 @@ export default {
       }
     },
     displayTranslationError() {
-      // TODO
+      console.log("Something went wrong translating.")
+      this.snackbarOptions = {show: true, color: 'red', text: 'Translation Failed! Are you connected to the internet?'};
     },
     isValidInput() {
       if (this.previouslyTranslated === this.inputText) return false;

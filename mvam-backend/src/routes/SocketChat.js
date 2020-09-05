@@ -5,6 +5,9 @@ module.exports = function(io) {
             room: '',
             username: ''
         };
+        /**
+         * Users can join a room were they can chat with other users, helping them with their questions.
+         */
         socket.on("subscribe", (regDetails) => {
             socket.userInfo.username = regDetails.username;
             socket.userInfo.room = `${regDetails.sourceLang}-${regDetails.targetLang}`;

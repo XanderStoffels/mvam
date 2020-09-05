@@ -31,6 +31,9 @@ module.exports = function (app) {
         }
     });
 
+    /**
+     * The user can upload a text file, which contents should be translated.
+     */
     app.post("/translate/file", async (req, res) => {
         let target = req.query.target;
         let source = req.query.source;

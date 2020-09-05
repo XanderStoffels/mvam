@@ -51,6 +51,7 @@ export default {
     selectedTargetLang: null,
   }),
   async mounted() {
+    // Populate the available languages.
     let service = new TranslationService();
     let data = await service.getAvailableLanguages()
     Object.keys(data)

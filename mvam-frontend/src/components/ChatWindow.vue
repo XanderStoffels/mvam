@@ -59,6 +59,8 @@ export default {
       this.registrationInfo = registrationInfo;
       this.chatClient = new ChatService();
 
+      // Subscribe to events from the chat client.
+      // Update component information when needed.
       this.chatClient.roomInfo = ((motd, count) => {
         this.addServerMessage(`${motd} There ${count === 1 ? "is" : "are"} currently ${count} ${count === 1 ? "person" : "people"} in this room.`);
       });
@@ -78,21 +80,26 @@ export default {
       };
       this.chatClient.connect(registrationInfo);
     },
+
     isMyself(sender) {
       return sender === "me";
     },
+
     isServer(sender) {
       return sender === "server";
     },
+
     addServerMessage(message) {
       let msg = {sender: "server", body: message};
       this.chatMessages.push(msg);
       this.scrollToLastMessage();
     },
+
     limitChars() {
       if (this.chatMessage.length > 144)
         this.chatMessages = this.chatMessage.substr(0, 144);
     },
+
     sendChat() {
       if (!this.chatMessage || this.chatMessage.trim().length < 1) return;
       if (!this.chatClient) return;
@@ -102,6 +109,7 @@ export default {
       let input = document.getElementById("input-field");
       input.focus();
     },
+
     scrollToLastMessage() {
       // We use a timeout so that the event loop first finishes updating the DOM.
       // Afterwards we can scroll to the newly added messages.
