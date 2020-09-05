@@ -6,7 +6,7 @@
           <v-col cols="6">
             <v-select :items="availableLanguages"
                       v-model="selectedSourceLang"
-                      @change="doTranslation(true)"
+                      @change="languageChange('source')"
                       item-text="name"
                       item-value="code"
                       outlined
@@ -15,7 +15,7 @@
           <v-col cols="6">
             <v-select :items="availableLanguages"
                       v-model="selectedTargetLang"
-                      @change="doTranslation(true)"
+                      @change="languageChange('target')"
                       item-text="name"
                       item-value="code"
                       outlined
@@ -118,6 +118,11 @@ export default {
     let data = await service.getAvailableLanguages()
     Object.keys(data)
         .forEach(k => this.availableLanguages.push({code: k, name: data[k]}));
+
+      let x = this.$store.getters.getSavedTargetLanguage;
+      let y = this.$store.getters.getSavedSourceLanguage;
+      this.selectedTargetLang = x;
+      this.selectedSourceLang = y;
   },
 
   computed: {
@@ -199,6 +204,17 @@ export default {
       input.value = '';
       input.files = e.dataTransfer.files;
       await this.filePicked();
+    },
+    async languageChange(origin) {
+      await this.doTranslation(true);
+      switch (origin) {
+        case 'source':
+          this.$store.commit('setSelectedSourceLanguage', this.selectedSourceLang);
+          break;
+        case 'target':
+          this.$store.commit('setSelectedTargetLanguage', this.selectedTargetLang);
+          break;
+      }
     }
   }
 }
