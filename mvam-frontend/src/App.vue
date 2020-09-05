@@ -48,6 +48,11 @@ export default {
   data: () => ({
     showNavigation: false
   }),
+
+  beforeCreate() {
+    // We need to load the previously stores Vuex state.
+    this.$store.commit('initialiseStore');
+  },
 };
 </script>
 

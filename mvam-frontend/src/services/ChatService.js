@@ -11,7 +11,7 @@ export default class ChatSerivce {
     async connect(registrationDetails) {
         if (this.socket && this.socket.connected)
             this.socket.disconnect();
-
+vue
 
         this.socket = io(this.url);
 
