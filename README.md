@@ -33,3 +33,9 @@
   * [Socket.io](https://socket.io/)
   * [Docker](https://www.docker.com/)
   * [Nginx](https://www.nginx.com/)
+
+### Install this application as an app
+#### On Deskop
+![Desktop](https://i.imgur.com/JO6c33Y.png)
+#### On Mobile
+![Mobile](https://i.imgur.com/r9nIols.png)
