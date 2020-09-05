@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <div class="input-section">
-      <v-container>
         <v-row class="language-options" justify="space-around">
           <v-col cols="6">
             <v-select :items="availableLanguages"
@@ -22,7 +21,6 @@
                       label="To"/>
           </v-col>
         </v-row>
-      </v-container>
       <v-row justify="center">
         <v-col cols="11" md="6">
           <v-card class="file-droppable" elevation="1" @drop.prevent="dropFile" @dragover.prevent>
@@ -78,16 +76,16 @@
       </v-row>
     </div>
     <v-snackbar
-        v-model="showCopySnackbar"
+        v-model="snackbarOptions.show"
         timeout="2500"
     >
-      <span>Translation copied!</span>
+      <span>{{snackbarOptions.text}}</span>
       <template v-slot:action="{ attrs }">
         <v-btn
-            color="accent"
+            :color="snackbarOptions.color"
             text
             v-bind="attrs"
-            @click="showCopySnackbar = false"
+            @click="snackbarOptions.show = false"
         >
           Close
         </v-btn>
@@ -107,7 +105,7 @@ export default {
     translatedText: "",
     latestTranslation: null,
     previouslyTranslated: "",
-    showCopySnackbar: false,
+    snackbarOptions: {show: false, color: 'accent', text: 'Translation Copied!'},
     availableLanguages: [ {code: '', name: ''}],
     selectedSourceLang: null,
     selectedTargetLang: null,
@@ -136,14 +134,15 @@ export default {
   methods: {
     async doTranslation(skipValidation) {
       // We don't want to request a new translation when the text is not valid.
-      if (!this.isInputEnabled || !this.inputText) return;
-      if (!skipValidation && !this.isValidInput()) return;
+      if (!this.isInputEnabled) {
+        return;
+      }
+      if (!this.inputText || (!skipValidation && !this.isValidInput()))
+        return;
 
       // Display a loading bar.
       // Use the translation service to request a translation from the backend.
       this.currentlyTranslating = "primary";
-      console.log(this.selectedSourceLang);
-      console.log(this.selectedTargetLang);
       let tservice = new TranslationService();
       let translation =
           await tservice.getTranslationAsync(this.selectedSourceLang, this.inputText, this.selectedTargetLang);
@@ -181,7 +180,7 @@ export default {
     },
     async copyToClipboard() {
       await navigator.clipboard.writeText(this.translatedText);
-      this.showCopySnackbar = true;
+      this.snackbarOptions.show = {show: false, color: 'accent', text: 'Translation Copied!'}
     },
     async filePicked() {
       let input = document.getElementById("file-upload");

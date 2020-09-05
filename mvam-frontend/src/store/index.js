@@ -16,7 +16,6 @@ let store = new Vuex.Store({
   },
   mutations: {
     initialiseStore(state) {
-      console.log("loading state");
       if (!localStorage.getItem('store')) return;
       this.replaceState(Object.assign(state, JSON.parse(localStorage.getItem('store'))));
     },
@@ -58,7 +57,6 @@ let store = new Vuex.Store({
 // Persist changes to the state to local storage.
 store.subscribe(((mutation, state) => {
   localStorage.setItem('store', JSON.stringify(state));
-  console.log("saving state");
 }));
 
 export default store;
